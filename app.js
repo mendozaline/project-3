@@ -70,7 +70,7 @@ function getSeasonsInfo(jsonReq) {
     //add event listener: closure
     var addEvntLstnr = function (j) {
         document.getElementById("seasonDiv" + j).addEventListener("click", function () {
-            var URL = "http://www.omdbapi.com/?t=";
+            var URL = "https://www.omdbapi.com/?t=";
             var tvTitle = document.getElementById("title").value;
             var season = "&season=" + j + "&type=series&r=json";
             var key = "&apikey=845e868c";
@@ -147,7 +147,7 @@ function createChart(chartData) {
         .attr("class", "dots")
         .append("a")
         .attr("xlink:href", function (d) {
-            return "http://www.imdb.com/title/" + d.imdbID;
+            return "https://www.imdb.com/title/" + d.imdbID;
         });
 
     chart.append("circle")
@@ -232,7 +232,7 @@ function createChart(chartData) {
 }
 
 document.getElementById("getdata").addEventListener("click", function () {
-    var baseURL = "http://www.omdbapi.com/?t=";
+    var baseURL = "https://www.omdbapi.com/?t=";
     var title = document.getElementById("title").value;
     var end = "&type=series&r=json";
     var key = "&apikey=845e868c";
