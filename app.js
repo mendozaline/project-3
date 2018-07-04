@@ -4,10 +4,8 @@ function jsonHelper(url, callback) {
     requestJSON.open("GET", url);
     requestJSON.addEventListener("load", function () {
         if (requestJSON.status < 300) {
-            //console.log("request jsonHelper:\n", requestJSON);
             callback(requestJSON);
         } else if (requestJSON.status >= 400) {
-            console.log("jsonHelper status", requestJSON.status);
             var strongError = document.createElement("strong");
             strongError.textContent = "Error: " + requestJSON.status;
             document.getElementById("error").appendChild(strongError);
@@ -19,9 +17,7 @@ function jsonHelper(url, callback) {
 
 function getSeasonsInfo(jsonReq) {
     "use strict";
-    console.log("jsonReq SeasonsInfo: ", jsonReq);
     var parsedJSON = JSON.parse(jsonReq.response);
-    console.log("parsedJSON response:\n", parsedJSON);
 
     //remove previous description or error content
     var previousDesc = document.getElementById("desc");
@@ -63,8 +59,6 @@ function getSeasonsInfo(jsonReq) {
         buttonDiv.id = "buttonDiv";
         descDiv.appendChild(buttonDiv);
     } else {
-        console.log("Error: ", parsedJSON.Error);
-
         var strongError = document.createElement("strong");
         strongError.id = "strongError";
         strongError.textContent = 'Error: "' +
@@ -76,12 +70,11 @@ function getSeasonsInfo(jsonReq) {
     //add event listener: closure
     var addEvntLstnr = function (j) {
         document.getElementById("seasonDiv" + j).addEventListener("click", function () {
-            console.log("season " + j + " clicked");
             var URL = "http://www.omdbapi.com/?t=";
             var tvTitle = document.getElementById("title").value;
             var season = "&season=" + j + "&type=series&r=json";
-            var searchURL = URL + tvTitle + season;
-            console.log("searchURL:\n", searchURL);
+            var key = "&apikey=845e868c";
+            var searchURL = URL + tvTitle + season + key;
             jsonHelper(searchURL, createChart);
         });
     };
@@ -98,11 +91,8 @@ function getSeasonsInfo(jsonReq) {
 }
 
 function createChart(chartData) {
-    //console.log("chartData:\n", chartData);
     var parsedJSON = JSON.parse(chartData.responseText);
-    //console.log("parsedJSON:\n", parsedJSON);
     var episodeData = parsedJSON.Episodes;
-    console.table(episodeData);
 
     var pad = {top: 50, bottom: 50, left: 75, right: 0};
     var w = parseInt(d3.select("#chartContainer").style("width"));
@@ -123,11 +113,9 @@ function createChart(chartData) {
         .orient("left");
 
     var xMinMax = d3.extent(episodeData, function (d) {
-        //console.log("d: ", parseInt(d.Episode));
         return parseInt(d.Episode);
     });
     var yMinMax = d3.extent(episodeData, function (d) {
-        //console.log("d: ", parseInt(d.imdbRating));
         return parseInt(d.imdbRating);
     });
 
@@ -164,12 +152,10 @@ function createChart(chartData) {
 
     chart.append("circle")
         .attr("cx", function (d) {
-            //console.log("released: ", parseDate(d.Released));
             return xScale(parseInt(d.Episode));
         })
         .attr("cy", function (d) {
             if (d.imdbRating === "N/A") {
-                //console.log(d.imdbRating);
                 return yScale(yMinMax[0]-1);
             } else {
                 return yScale(d.imdbRating);
@@ -243,15 +229,13 @@ function createChart(chartData) {
         .attr("y", 42.5)
         .attr("text-anchor", "middle")
         .text("episodes");
-
 }
 
 document.getElementById("getdata").addEventListener("click", function () {
-    //console.log("Button clicked!");
     var baseURL = "http://www.omdbapi.com/?t=";
     var title = document.getElementById("title").value;
     var end = "&type=series&r=json";
-    var titleURL = baseURL + title + end;
-    console.log("titleURL:\n", titleURL);
+    var key = "&apikey=845e868c";
+    var titleURL = baseURL + title + end + key;
     jsonHelper(titleURL, getSeasonsInfo);
 });
